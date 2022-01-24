@@ -1,4 +1,4 @@
-# ASP.NET-Memshell-Scanner v1.1
+# ASP.NET-Memshell-Scanner v1.2
  asp.net内存马检测工具，通过aspx脚本来实现asp.net内存马的检测以及查杀。
 
 核心代码来源于：[yzddmr6/As-Exploits](https://github.com/yzddmr6/As-Exploits)
@@ -9,6 +9,7 @@
 
 * VirtualPath内存马 (蚁剑、哥斯拉)
 * ASP.NET MVC Filter内存马
+* Router内存马
 
 ## 使用
 
@@ -37,6 +38,10 @@ MemShell.SamplePathProvider为蚁剑的内存马
 ![image-20211219152132513](README.assets/image-20211219152132513.png)
 
 ## 更新日志
+
+### v1.2 (2022.1.24)
+
+* 增加Router内存马检测
 
 ### v1.1 (2022.1.15)
 

@@ -2,6 +2,7 @@
 <%@ Import Namespace="System.Reflection" %>
 <%@ Import Namespace="System.Web.Hosting" %>
 <%@ Import Namespace="System.Web.Mvc" %>
+<%@ Import Namespace="System.Web.Routing" %>
 
 <head>
     <title>ASP.NET-Memshell-Killer</title>
@@ -176,11 +177,63 @@
             return "No filter";
         }
     }
-    
+
+    public static string listAllRouter()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.Append("<h4>Router scan result</h4>");
+        sb.Append(
+            "<table border=\"1\" cellspacing=\"0\" width=\"95%\" style=\"table-layout:fixed;word-break:break-all;background:#f2f2f2\">\n" +
+            "    <thead>\n" +
+            "        <th width=\"5%\">ID</th>\n" +
+            "        <th width=\"20%\">Router Type</th>\n" +
+            "        <th width=\"10%\">URL</th>\n" +
+            "        <th width=\"10%\">RouteHandler Type</th>\n" +
+            "        <th width=\"10%\">CodeBase</th>\n" +
+            "        <th width=\"5%\">kill</th>\n" +
+            "    </thead>\n" +
+            "    <tbody>");
+
+        RouteCollection routes = RouteTable.Routes;
+        int i = 0;
+        foreach (RouteBase route in routes)
+        {
+            i++;
+            string type = route.GetType().ToString();
+            string url, handlerType, codebase;
+            if (route.GetType() == typeof(Route))
+            {
+                Route r = (Route)route;
+                url = r.Url;
+                handlerType = r.RouteHandler.GetType().ToString();
+                codebase = r.RouteHandler.GetType().Assembly.CodeBase;
+            }
+            else
+            {
+                url = "*";
+                handlerType = "null";
+                codebase = route.GetType().Assembly.CodeBase;
+            }
+
+            sb.Append(String.Format(
+                "<td style=\"text-align:center\">{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td style=\"text-align:center\"><a href=\"?action=deleteRouter&name={5}\">kill</a></td>"
+                , i
+                , type
+                , url
+                , handlerType
+                , codebase
+                , type
+                ));
+            sb.Append("</tr>");
+        }
+        sb.Append("</tbody></table>");
+        return sb.ToString();
+    }
+
 </script>
 
 <%
-    Response.Write("<h2>ASP.NET Memshell Killer v1.1</h2>");
+    Response.Write("<h2>ASP.NET Memshell Killer v1.2</h2>");
     Response.Write("code by yzddmr6");
     string result = "";
     string action = Request.Params["action"];
@@ -198,6 +251,7 @@
     {
         result += listAllVPP();
         result += listAllFilter();
+        result += listAllRouter();
         Response.Write(result);
     }
 
