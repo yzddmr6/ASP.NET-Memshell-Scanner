@@ -1,4 +1,4 @@
-# ASP.NET-Memshell-Scanner v1.2
+# ASP.NET-Memshell-Scanner v1.3
  asp.net内存马检测工具，通过aspx脚本来实现asp.net内存马的检测以及查杀。
 
 核心代码来源于：[yzddmr6/As-Exploits](https://github.com/yzddmr6/As-Exploits)
@@ -7,7 +7,7 @@
 
 ## 支持类型
 
-* VirtualPath内存马 (蚁剑、哥斯拉)
+* VirtualPath内存马
 * ASP.NET MVC Filter内存马
 * Router内存马
 
@@ -17,11 +17,9 @@
 
 ### 默认情况
 
-![image-20211219152259442](README.assets/image-20211219152259442.png)
+![image-20220417152231890](README.assets/image-20220417152231890.png)
 
-如果业务中不存在添加虚拟目录的代码，默认只会有一条结果。
-
-注意：System.Web.Hosting.MapPathBasedVirtualPathProvider为系统默认VirtualPathProvider，请勿删除，否则会导致网站崩溃。
+注意：请勿删除默认组件，否则会导致网站崩溃。
 
 ### 存在内存马的情况
 
@@ -37,7 +35,21 @@ MemShell.SamplePathProvider为蚁剑的内存马
 
 ![image-20211219152132513](README.assets/image-20211219152132513.png)
 
+## 系列文章
+
+[ASP.NET下的内存马(1) filter内存马](https://tttang.com/archive/1408/)
+
+[ASP.NET下的内存马(2) Route内存马](https://tttang.com/archive/1420/)
+
+[ASP.NET下的内存马(3) HttpListener内存马](https://tttang.com/archive/1420/)
+
+[ASP.NET下的内存马(4) VirtualPath内存马](https://tttang.com/archive/1488/)
+
 ## 更新日志
+
+### v1.3 (2022.4.17)
+
+* 增加filter router内存马卸载功能
 
 ### v1.2 (2022.1.24)
 

@@ -8,7 +8,8 @@
     <title>ASP.NET-Memshell-Killer</title>
 </head>
 <script runat="server">
-    public string listAllVPP()
+    public
+        string listAllVPP()
     {
         StringBuilder sb = new StringBuilder();
         sb.Append("<h4>VirtualPathProvider scan result</h4>");
@@ -58,7 +59,7 @@
 
             VirtualPathProvider _previous = (VirtualPathProvider)prefield.GetValue(current);
             sb.Append(String.Format(
-                "<td style=\"text-align:center\">{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td><td style=\"text-align:center\"><a href=\"?action=deleteVPP&name={7}\">kill</a></td>"
+                "<td style=\"text-align:center\">{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td><td style=\"text-align:center\"><a href=\"?action=deleteVPP&name={7}&id={8}\">kill</a></td>"
                 , i
                 , vpptype
                 , _virtualDir
@@ -66,7 +67,8 @@
                 , gslpwd
                 , gslkey
                 , codebase
-                , vpptype));
+                , System.Web.HttpUtility.UrlEncode(vpptype.ToString())
+                , i));
             sb.Append("</tr>");
             current = _previous;
         }
@@ -75,13 +77,15 @@
         return sb.ToString();
     }
 
-    public string deleteVPP(string className)
+    public string deleteVPP(int id, string className)
     {
         VirtualPathProvider bak = null; //后一个节点
         VirtualPathProvider current = HostingEnvironment.VirtualPathProvider; //当前节点
         VirtualPathProvider _previous = null; //前一个节点
+        int i = 0;
         while (current != null)
         {
+            i += 1;
             Type vpptype = current.GetType();
             FieldInfo prefield = typeof(VirtualPathProvider).GetField("_previous",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
@@ -90,25 +94,24 @@
 
             _previous = (VirtualPathProvider)prefield.GetValue(current);
 
-            if (vpptype.ToString().Equals(className)) //如果匹配到目标节点
+            if (i == id && vpptype.ToString().Equals(className)) //如果匹配到目标节点
             {
                 if (bak == null) //如果删除的为当前节点，直接把当前节点设为_previous
                 {
                     setVPP(_previous);
-                    return className + " delete Success!";
                 }
                 else
                 {
                     setPrevious(bak, _previous); //否则把后一个节点的pre节点设为当前节点的下一个节点
-                    return className + " delete Success!";
                 }
+                return className + " delete Success!";
             }
 
             bak = current;
             current = _previous;
         }
 
-        return "Cannot find target child " + className;
+        return "Cannot find target VPP " + className;
     }
 
     public static void setVPP(VirtualPathProvider obj)
@@ -158,13 +161,14 @@
                 int filterOrder = filter.Order;
                 FilterScope filterScope = filter.Scope;
                 sb.Append(String.Format(
-                    "<td style=\"text-align:center\">{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td style=\"text-align:center\"><a href=\"?action=deleteFilter&name={5}\">kill</a></td>"
+                    "<td style=\"text-align:center\">{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td style=\"text-align:center\"><a href=\"?action=deleteFilter&name={5}&id={6}\">kill</a></td>"
                     , i
                     , filterType
                     , filterOrder
                     , filterScope
                     , codebase
-                    , filterType
+                    , System.Web.HttpUtility.UrlEncode(filterType)
+                    , i
                     ));
                 sb.Append("</tr>");
             }
@@ -176,6 +180,41 @@
             // Console.WriteLine(e);
             return "No filter";
         }
+    }
+
+    public static string deleteFilter(int id, string name)
+    {
+        try
+        {
+            GlobalFilterCollection globalFilterCollection = GlobalFilters.Filters;
+            int i = 0;
+
+            foreach (Filter filter in globalFilterCollection)
+            {
+                i++;
+                string filterType = filter.Instance.GetType().ToString();
+                if (i == id && filterType.Equals(name))
+                {
+                    // globalFilterCollection.Remove(filter);
+                    FieldInfo filtersField = globalFilterCollection.GetType().GetField("_filters", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                    List<Filter> filtersList = (List<Filter>)filtersField.GetValue(globalFilterCollection);
+                    bool flag = filtersList.Remove(filter);
+                    if (flag)
+                    {
+                        return name + " delete Success!";
+                    }
+                    else
+                    {
+                        return name + " delete Failed!";
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            return name + " delete Failed! " + e;
+        }
+        return "Can not find target filter: " + name;
     }
 
     public static string listAllRouter()
@@ -216,13 +255,14 @@
             }
 
             sb.Append(String.Format(
-                "<td style=\"text-align:center\">{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td style=\"text-align:center\"><a href=\"?action=deleteRouter&name={5}\">kill</a></td>"
+                "<td style=\"text-align:center\">{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td style=\"text-align:center\"><a href=\"?action=deleteRouter&name={5}&id={6}\">kill</a></td>"
                 , i
                 , type
                 , url
                 , handlerType
                 , codebase
-                , type
+                , System.Web.HttpUtility.UrlEncode(type)
+                , i
                 ));
             sb.Append("</tr>");
         }
@@ -230,22 +270,55 @@
         return sb.ToString();
     }
 
+    public static string deleteRouter(int id, string name)
+    {
+        try
+        {
+            RouteCollection routes = RouteTable.Routes;
+            int i = 0;
+            foreach (RouteBase route in routes)
+            {
+                i++;
+                string type = route.GetType().ToString();
+                if (i == id && type.Equals(name))
+                {
+                    routes.Remove(route);
+                    return name + " delete Success!";
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            return name + " delete Failed! " + e;
+        }
+        return "Can not find target router: " + name;
+    }
+
 </script>
 
 <%
-    Response.Write("<h2>ASP.NET Memshell Killer v1.2</h2>");
+    Response.Write("<h2>ASP.NET Memshell Killer v1.3</h2>");
     Response.Write("code by yzddmr6");
     string result = "";
     string action = Request.Params["action"];
     string name = Request.Params["name"];
     if (action != null && name != null)
     {
+        int id = int.Parse(Request.Params["id"]);
         if (action.Equals("deleteVPP"))
         {
-            result += deleteVPP(name);
-            Response.Write(String.Format("<script language=javascript>alert(\"{0}\")</script>", result));
+            result += deleteVPP(id, name);
         }
-        Response.Write("<script language=javascript>window.history.go(-1);window.location.reload(true)</script>");
+        else if (action.Equals("deleteFilter"))
+        {
+            result += deleteFilter(id, name);
+        }
+        else if (action.Equals("deleteRouter"))
+        {
+            result += deleteRouter(id, name);
+        }
+        Response.Write(String.Format("<script language=javascript>alert(\"{0}\")</script>", result));
+        Response.Write("<script language=javascript>window.location.replace(document.referrer);</script>");
     }
     else
     {
