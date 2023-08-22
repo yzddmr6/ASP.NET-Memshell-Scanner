@@ -37,15 +37,19 @@ MemShell.SamplePathProvider为蚁剑的内存马
 
 ## 系列文章
 
-[ASP.NET下的内存马(1) filter内存马](https://tttang.com/archive/1408/)
+[ASP.NET下的内存马(1) filter内存马](https://yzddmr6.com/posts/asp-net-memory-filter/)
 
-[ASP.NET下的内存马(2) Route内存马](https://tttang.com/archive/1420/)
+[ASP.NET下的内存马(2) Route内存马](https://yzddmr6.com/posts/asp-net-memory-shell-router/)
 
-[ASP.NET下的内存马(3) HttpListener内存马](https://tttang.com/archive/1420/)
+[ASP.NET下的内存马(3) HttpListener内存马](https://yzddmr6.com/posts/asp-net-memory-shell-httplistener/)
 
-[ASP.NET下的内存马(4) VirtualPath内存马](https://tttang.com/archive/1488/)
+[ASP.NET下的内存马(4) VirtualPath内存马](https://yzddmr6.com/posts/asp-net-memory-shell-virtualpath/)
 
 ## 更新日志
+
+### v1.4 (2023.8.22)
+
+* 采用assembly加载的方式，防止部分环境下缺失依赖
 
 ### v1.3 (2022.4.17)
 
