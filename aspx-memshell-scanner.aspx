@@ -1,8 +1,6 @@
 <%@ Page Language="c#"%>
 <%@ Import Namespace="System.Reflection" %>
 <%@ Import Namespace="System.Web.Hosting" %>
-<%@ Import Namespace="System.Web.Mvc" %>
-<%@ Import Namespace="System.Web.Routing" %>
 
 <head>
     <title>ASP.NET-Memshell-Killer</title>
